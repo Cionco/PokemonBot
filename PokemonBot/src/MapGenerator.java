@@ -21,11 +21,19 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.GridBagConstraints;
+
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -243,13 +251,35 @@ public class MapGenerator extends JFrame {
 
 					@Override
 					public void windowDeactivated(WindowEvent e) {
-						btn_selectTool.setText(dlg.data.toString());
-						paint = dlg.data.getColor();
-						btn_selectTool.setBackground(paint);
+						btn_selectTool.setText(/*dlg.data.toString()*/"");
+						ImageIcon image = new ImageIcon("/Users/ulfkepper/Desktop/tree.png");
+						adaptButtonIconSize(btn_selectTool, image);
+						
 						super.windowDeactivated(e);
 					}
 				});
 			}
+		});
+		
+		btn_selectTool.addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				adaptButtonIconSize(btn_selectTool);				
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+			}
+			
 		});
 		toolPaneEast.add(btn_selectTool);
 	
@@ -290,6 +320,24 @@ public class MapGenerator extends JFrame {
 	
 	private void open(int index) {
 		
+	}
+
+	private void adaptButtonIconSize(JButton btn_selectTool, ImageIcon image) {
+		Dimension size = btn_selectTool.getSize();
+		Insets insets = btn_selectTool.getInsets();
+		size.width -= insets.left + insets.right;
+		size.height -= insets.top + insets.bottom;
+		if (size.width > size.height) {
+		    size.width = -1;
+		} else {
+		    size.height = -1;
+		}
+		Image scaled = image.getImage().getScaledInstance(size.width, size.height, java.awt.Image.SCALE_SMOOTH);
+		btn_selectTool.setIcon(new ImageIcon(scaled));
+	}
+	
+	private void adaptButtonIconSize(JButton button) {
+		adaptButtonIconSize(button, (ImageIcon)button.getIcon());
 	}
 
 }
