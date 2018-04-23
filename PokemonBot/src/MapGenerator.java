@@ -19,6 +19,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -44,6 +46,8 @@ public class MapGenerator extends JFrame {
 	private JTable table;
 	
 	private final int CELL_SIZE = 20;
+	
+	private Color paint = null;
 	
 	/**
 	 * Launch the application.
@@ -233,7 +237,18 @@ public class MapGenerator extends JFrame {
 		btn_selectTool.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				ToolDialog dlg = new ToolDialog();
 				
+				dlg.addWindowListener(new WindowAdapter() {
+
+					@Override
+					public void windowDeactivated(WindowEvent e) {
+						btn_selectTool.setText(dlg.data.toString());
+						paint = dlg.data.getColor();
+						btn_selectTool.setBackground(paint);
+						super.windowDeactivated(e);
+					}
+				});
 			}
 		});
 		toolPaneEast.add(btn_selectTool);

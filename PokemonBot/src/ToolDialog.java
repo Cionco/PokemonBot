@@ -5,10 +5,14 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class ToolDialog extends JDialog {
+public class ToolDialog extends JDialog implements ActionListener {
 
 	private final JPanel contentPanel = new JPanel();
+	public Waytype data = null;
 
 	/**
 	 * Launch the application.
@@ -29,39 +33,24 @@ public class ToolDialog extends JDialog {
 	public ToolDialog() {
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		{
-			JButton btnForest = new JButton("Forest");
-			contentPanel.add(btnForest);
+		contentPanel.setLayout(new GridLayout(3, 4));
+		
+		for(Waytype wt : Waytype.values()) {
+			JButton newButton = new JButton(wt.toString());
+			newButton.addActionListener(this);
+			contentPanel.add(newButton);
 		}
-		{
-			JButton btnCity = new JButton("City");
-			btnCity.setActionCommand("City");
-			contentPanel.add(btnCity);
-		}
-		{
-			JButton btnWater = new JButton("Water");
-			btnWater.setActionCommand("Water");
-			contentPanel.add(btnWater);
-		}
-		{
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			{
-				JButton okButton = new JButton("OK");
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
-			}
-			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
-			}
-		}
+		
+		this.setVisible(true);
 	}
-
+	
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		data = Waytype.valueOf(((JButton)e.getSource()).getText());
+		this.dispose();
+	}
+	
 }
