@@ -55,7 +55,7 @@ public class MapGenerator extends JFrame {
 	
 	private final int CELL_SIZE = 20;
 	
-	private Color paint = null;
+	private Waytype current = null;
 	
 	/**
 	 * Launch the application.
@@ -251,10 +251,10 @@ public class MapGenerator extends JFrame {
 
 					@Override
 					public void windowDeactivated(WindowEvent e) {
-						btn_selectTool.setText(/*dlg.data.toString()*/"");
-						ImageIcon image = new ImageIcon("/Users/ulfkepper/Desktop/tree.png");
-						adaptButtonIconSize(btn_selectTool, image);
-						
+						current = dlg.data;
+						btn_selectTool.setText("");
+						adaptButtonIconSize(btn_selectTool, current.getIcon());
+						setTableIcon((DefaultTableModel)table.getModel(), 1, 1, current.getIcon());
 						super.windowDeactivated(e);
 					}
 				});
@@ -292,7 +292,14 @@ public class MapGenerator extends JFrame {
 	}
 
 	private void setupCenter() {
-		table = new JTable(20, 20);
+		DefaultTableModel model = new DefaultTableModel(20, 20) {
+			@Override
+			public Class getColumnClass(int column) {
+				return ImageIcon.class;
+			}
+		};
+		
+		table = new JTable(model);
 		JScrollPane scroll = new JScrollPane(table);
 		table.setShowGrid(true);
 		table.setGridColor(Color.BLACK);
@@ -322,9 +329,9 @@ public class MapGenerator extends JFrame {
 		
 	}
 
-	private void adaptButtonIconSize(JButton btn_selectTool, ImageIcon image) {
-		Dimension size = btn_selectTool.getSize();
-		Insets insets = btn_selectTool.getInsets();
+	private void adaptButtonIconSize(JButton button, ImageIcon image) {
+		Dimension size = button.getSize();
+		Insets insets = button.getInsets();
 		size.width -= insets.left + insets.right;
 		size.height -= insets.top + insets.bottom;
 		if (size.width > size.height) {
@@ -333,11 +340,25 @@ public class MapGenerator extends JFrame {
 		    size.height = -1;
 		}
 		Image scaled = image.getImage().getScaledInstance(size.width, size.height, java.awt.Image.SCALE_SMOOTH);
-		btn_selectTool.setIcon(new ImageIcon(scaled));
+		button.setIcon(new ImageIcon(scaled));
 	}
 	
 	private void adaptButtonIconSize(JButton button) {
-		adaptButtonIconSize(button, (ImageIcon)button.getIcon());
+		try {
+			adaptButtonIconSize(button, current.getIcon());
+		} catch(NullPointerException e) {
+			
+		}
 	}
 
+	private void setTableIcon(DefaultTableModel model, int x, int y, ImageIcon image) {
+		Dimension size = new Dimension(CELL_SIZE, CELL_SIZE);
+		if (size.width > size.height) {
+		    size.width = -1;
+		} else {
+		    size.height = -1;
+		}
+		Image scaled = image.getImage().getScaledInstance(size.width, size.height, java.awt.Image.SCALE_SMOOTH);
+		model.setValueAt(new ImageIcon(scaled), y, x);
+	}
 }
