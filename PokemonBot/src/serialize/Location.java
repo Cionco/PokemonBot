@@ -7,15 +7,6 @@ import javax.swing.JTable;
 
 public class Location {
 	
-	public static void main(String[] args) {
-		Location l = new Location("Test", new JTable(3, 3));
-		for(Field f : l.fields) System.out.println(f.getX() + "/" + f.getY());
-		System.out.println();
-		l.updateSize(new JTable(2, 2));
-		for(Field f : l.fields) System.out.println(f.getX() + "/" + f.getY());
-		
-	}
-
 	private String name;
 	private String filename;
 	private String description;
@@ -25,6 +16,10 @@ public class Location {
 	public Location(String name) {
 		this.name = name;
 		this.filename = name.replaceAll(" ", "_") + ".json";
+		this.size = new Dimension(20, 20);
+		for(int i = 0; i < size.height; i++) 
+			for(int j = 0; j < size.width; j++) 
+				fields.add(new Field(j, i));
 	}
 	
 	public Location(String name, JTable table) {
@@ -34,6 +29,13 @@ public class Location {
 		for(int i = 0; i < size.height; i++) 
 			for(int j = 0; j < size.width; j++) 
 				fields.add(new Field(j, i));
+	}
+	
+	public int getWidth() {
+		return size.width;
+	}
+	public int getHeight() {
+		return size.height;
 	}
 	
 	public Field getField(int x, int y) {
@@ -68,6 +70,6 @@ public class Location {
 				}
 		}
 		
+		this.size = newSize;
 	}
-
 }

@@ -22,6 +22,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -57,6 +61,7 @@ public class MapGenerator extends JFrame {
 	private List list;
 	private JTable table;
 	private ArrayList<Location> locations = new ArrayList<Location>();
+	private Location openedLocation;
 	
 	private final int CELL_SIZE = 20;
 	
@@ -94,7 +99,7 @@ public class MapGenerator extends JFrame {
 		
 		setupNorth();
 		
-		setupCenter();
+		//setupCenter(20, 20);
 		
 		setupEast();
 	}
@@ -104,7 +109,13 @@ public class MapGenerator extends JFrame {
 		westPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		westPane.setLayout(new GridBagLayout());
 		
-		list = new List();
+		list = new List();	
+		list.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				open(list.getSelectedIndex());
+			}
+		});
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.VERTICAL;
 		c.gridx = 0;
@@ -118,6 +129,12 @@ public class MapGenerator extends JFrame {
 		
 		
 		JButton btn_plus = new JButton("+");
+		btn_plus.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				addNewLocation();
+			}
+		});
 		btn_plus.setForeground(Color.GREEN);
 		
 		c.gridwidth = 1;
@@ -131,6 +148,20 @@ public class MapGenerator extends JFrame {
 		
 		
 		JButton btn_del = new JButton("x");
+		btn_del.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int opt = JOptionPane.showConfirmDialog(null, "Are you sure that you want to delete the location: " + list.getSelectedItem(), "Delete Location?", JOptionPane.OK_CANCEL_OPTION);
+				if(opt == JOptionPane.CANCEL_OPTION) return;
+				
+				//TODO if file exists delete file
+				
+				locations.remove(list.getSelectedIndex());
+				list.remove(list.getSelectedIndex());
+				list.select(0);
+				open(list.getSelectedIndex());
+			}
+		});
 		btn_del.setForeground(Color.RED);
 		
 		c.gridx = 1;
@@ -163,6 +194,12 @@ public class MapGenerator extends JFrame {
 		northPane.add(btn_save);
 		
 		JButton btn_open = new JButton("open");
+		btn_open.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				open(list.getSelectedIndex());
+			}
+		});
 		northPane.add(btn_open);
 		
 		JPanel x_coordPane = new JPanel();
@@ -175,6 +212,11 @@ public class MapGenerator extends JFrame {
 		txt_x.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(list.getSelectedIndex() == -1) {
+					JOptionPane.showConfirmDialog(null, "Select Location!", "No location selected", JOptionPane.DEFAULT_OPTION);
+					return;
+				}
+				
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
 				if(Integer.parseInt(txt_x.getText()) > table.getColumnCount()) 
 					for(int i = table.getColumnCount(); i < Integer.parseInt(txt_x.getText()); i++)
@@ -184,6 +226,7 @@ public class MapGenerator extends JFrame {
 						model.setColumnCount(table.getColumnCount() - 1);
 				
 				setCellSize();
+				loc().updateSize(table);
 			}
 		});
 		
@@ -197,6 +240,11 @@ public class MapGenerator extends JFrame {
 		txt_y.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(list.getSelectedIndex() == -1) {
+					JOptionPane.showConfirmDialog(null, "Select Location!", "No location selected", JOptionPane.DEFAULT_OPTION);
+					return;
+				}
+				
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
 				if(Integer.parseInt(txt_y.getText()) > table.getRowCount()) 
 					for(int i = table.getRowCount(); i < Integer.parseInt(txt_y.getText()); i++) 
@@ -204,6 +252,8 @@ public class MapGenerator extends JFrame {
 				else 
 					for(int i = table.getRowCount() - 1; i >= Integer.parseInt(txt_y.getText()); i--) 
 						model.removeRow(i);
+				
+				loc().updateSize(table);
 			}
 		});
 		
@@ -259,7 +309,6 @@ public class MapGenerator extends JFrame {
 						current = dlg.data;
 						btn_selectTool.setText("");
 						adaptButtonIconSize(btn_selectTool, current.getIcon());
-						setTableIcon((DefaultTableModel)table.getModel(), 1, 1, current.getIcon());
 						super.windowDeactivated(e);
 					}
 				});
@@ -296,10 +345,10 @@ public class MapGenerator extends JFrame {
 		contentPane.add(eastPane, BorderLayout.EAST);
 	}
 
-	private void setupCenter() {
-		DefaultTableModel model = new DefaultTableModel(20, 20) {
+	private void setupCenter(int height, int width) {
+		DefaultTableModel model = new DefaultTableModel(height, width) {
 			@Override
-			public Class getColumnClass(int column) {
+			public Class<?> getColumnClass(int column) {
 				return ImageIcon.class;
 			}
 		};
@@ -314,6 +363,47 @@ public class MapGenerator extends JFrame {
 		table.setTableHeader(null);
 		table.setCellSelectionEnabled(true);
 		contentPane.add(scroll, BorderLayout.CENTER);
+		table.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				setTableIcon((DefaultTableModel)table.getModel(), table.getSelectedColumn(), table.getSelectedRow(), current.getIcon());
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if(current == null) {
+					JOptionPane.showConfirmDialog(null, "Select Tool First!", "No tool selected", JOptionPane.DEFAULT_OPTION);
+					return;
+				}
+				ImageIcon image = current.getIcon();
+				for(int row : table.getSelectedRows())
+					for(int column : table.getSelectedColumns()) {
+						setTableIcon((DefaultTableModel)table.getModel(), column, row, image);
+					}
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		this.revalidate();
 	}
 
 	private void setCellSize() {
@@ -328,14 +418,45 @@ public class MapGenerator extends JFrame {
 	private void addNewLocation() {
 		String name = JOptionPane.showInputDialog("Location Name: ");
 		list.add(name);
-		locations.add(new Location(name, table));
+		list.select(list.getItemCount() - 1);
+		locations.add(new Location(name));
+		open(list.getItemCount() - 1);
 	}
 	
 	private void open(int index) {
+		try {
+			openedLocation = locations.get(index);			
+		} catch(ArrayIndexOutOfBoundsException e) {
+			openedLocation = null;
+		}
 		
+		//Remove old center
+		try {
+			BorderLayout layout = (BorderLayout) contentPane.getLayout();
+			contentPane.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+			this.revalidate();
+			this.repaint();
+		} catch(NullPointerException e) {		//Occurs when no center is set yet
+			
+		}
+		if(openedLocation != null) {
+			//Create new Center
+			setupCenter(openedLocation.getHeight(), openedLocation.getWidth());
+			
+			txt_x.setText(Integer.toString(openedLocation.getWidth()));
+			txt_y.setText(Integer.toString(openedLocation.getHeight()));
+			
+			//TODO Recreate all fields
+		}
 	}
 
 	private void adaptButtonIconSize(JButton button, ImageIcon image) {
+		if(image == null) {
+			button.setIcon(null);
+			button.setText(current.toString());
+			return;
+		}
+		
 		Dimension size = button.getSize();
 		Insets insets = button.getInsets();
 		size.width -= insets.left + insets.right;
@@ -357,7 +478,12 @@ public class MapGenerator extends JFrame {
 		}
 	}
 
-	private void setTableIcon(DefaultTableModel model, int x, int y, ImageIcon image) {
+	private void setTableIcon(DefaultTableModel model, int x, int y, ImageIcon image) {	
+		if(image == null) {
+			model.setValueAt(null, y, x);
+			return;
+		}
+		
 		Dimension size = new Dimension(CELL_SIZE, CELL_SIZE);
 		if (size.width > size.height) {
 		    size.width = -1;
@@ -366,5 +492,10 @@ public class MapGenerator extends JFrame {
 		}
 		Image scaled = image.getImage().getScaledInstance(size.width, size.height, java.awt.Image.SCALE_SMOOTH);
 		model.setValueAt(new ImageIcon(scaled), y, x);
+	}
+
+	private Location loc() {
+		return locations.get(list.getSelectedIndex());
+		
 	}
 }

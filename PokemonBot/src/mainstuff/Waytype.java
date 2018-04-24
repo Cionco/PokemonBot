@@ -47,6 +47,6 @@ public enum Waytype {
     }
     
     public ImageIcon getIcon() {
-    	throw new AbstractMethodError();
+    	return null;
     }
 }
