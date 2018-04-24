@@ -1,4 +1,4 @@
-package java;
+package mainstuff;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,6 +15,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import serialize.Location;
+
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +27,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -53,6 +56,7 @@ public class MapGenerator extends JFrame {
 	private JTextArea txa_desc;
 	private List list;
 	private JTable table;
+	private ArrayList<Location> locations = new ArrayList<Location>();
 	
 	private final int CELL_SIZE = 20;
 	
@@ -323,7 +327,8 @@ public class MapGenerator extends JFrame {
 
 	private void addNewLocation() {
 		String name = JOptionPane.showInputDialog("Location Name: ");
-		
+		list.add(name);
+		locations.add(new Location(name, table));
 	}
 	
 	private void open(int index) {

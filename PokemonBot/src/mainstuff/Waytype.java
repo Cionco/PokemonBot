@@ -1,4 +1,4 @@
-package java;
+package mainstuff;
 import java.awt.Color;
 
 import javax.swing.ImageIcon;
