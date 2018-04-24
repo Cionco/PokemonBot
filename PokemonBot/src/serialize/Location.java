@@ -5,13 +5,15 @@ import java.util.ArrayList;
 
 import javax.swing.JTable;
 
+import mainstuff.Waytype;
+
 public class Location {
 	
 	private String name;
 	private String filename;
 	private String description;
 	private Dimension size;
-	public ArrayList<Field> fields = new ArrayList<Field>();
+	private ArrayList<Field> fields = new ArrayList<Field>();
 	
 	public Location(String name) {
 		this.name = name;
@@ -40,6 +42,14 @@ public class Location {
 	
 	public Field getField(int x, int y) {
 		return fields.get(y * size.width + x);
+	}
+	
+	public void setField(int x, int y, Waytype type) {
+		getField(x, y).setType(type);
+	}
+	
+	public ArrayList<Field> getFields() {
+		return fields;
 	}
 	
 	public void updateSize(JTable table) {

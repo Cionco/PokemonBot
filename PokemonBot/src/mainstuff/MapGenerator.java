@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import serialize.Field;
 import serialize.Location;
 
 import java.awt.List;
@@ -368,11 +369,11 @@ public class MapGenerator extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				setTableIcon((DefaultTableModel)table.getModel(), table.getSelectedColumn(), table.getSelectedRow(), current.getIcon());
+				openedLocation.setField(table.getSelectedColumn(), table.getSelectedRow(), current);
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
 				
 			}
 
@@ -386,19 +387,18 @@ public class MapGenerator extends JFrame {
 				for(int row : table.getSelectedRows())
 					for(int column : table.getSelectedColumns()) {
 						setTableIcon((DefaultTableModel)table.getModel(), column, row, image);
+						openedLocation.setField(column, row, current);
 					}
 				
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
 				
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
 				
 			}
 			
@@ -446,7 +446,10 @@ public class MapGenerator extends JFrame {
 			txt_x.setText(Integer.toString(openedLocation.getWidth()));
 			txt_y.setText(Integer.toString(openedLocation.getHeight()));
 			
-			//TODO Recreate all fields
+			//Recreate all fields
+			for(Field f : openedLocation.getFields()) 
+				if(f.getType() != null) 
+					setTableIcon((DefaultTableModel)table.getModel(), f.getX(), f.getY(), f.getType().getIcon());
 		}
 	}
 

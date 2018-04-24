@@ -7,7 +7,7 @@ public class Field {
 	private int x;
 	private int y;
 	
-	private Waytype type;
+	private Waytype type = null;
 	
 	public Field(int x, int y) {
 		this.x = x;
@@ -16,6 +16,10 @@ public class Field {
 	
 	public void setType(Waytype type) {
 		this.type = type;
+	}
+	
+	public Waytype getType() {
+		return type;
 	}
 	
 	public int getX() {
