@@ -212,7 +212,7 @@ public class MapGenerator extends JFrame {
 		txt_x.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(list.getSelectedIndex() == -1) {
+				if(openedLocation == null) {
 					JOptionPane.showConfirmDialog(null, "Select Location!", "No location selected", JOptionPane.DEFAULT_OPTION);
 					return;
 				}
@@ -240,7 +240,7 @@ public class MapGenerator extends JFrame {
 		txt_y.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(list.getSelectedIndex() == -1) {
+				if(openedLocation == null) {
 					JOptionPane.showConfirmDialog(null, "Select Location!", "No location selected", JOptionPane.DEFAULT_OPTION);
 					return;
 				}
