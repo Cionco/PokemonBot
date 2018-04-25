@@ -498,7 +498,7 @@ public class MapGenerator extends JFrame {
 	}
 
 	private Location loc() {
-		return locations.get(list.getSelectedIndex());
-		
+		//return locations.get(list.getSelectedIndex());
+		return openedLocation;
 	}
 }
