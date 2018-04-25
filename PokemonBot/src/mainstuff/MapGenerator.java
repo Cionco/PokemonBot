@@ -31,6 +31,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -192,6 +193,12 @@ public class MapGenerator extends JFrame {
 		northPane.add(btn_new);
 		
 		JButton btn_save = new JButton("save");
+		btn_save.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				save(openedLocation);
+			}
+		});
 		northPane.add(btn_save);
 		
 		JButton btn_open = new JButton("open");
@@ -265,23 +272,7 @@ public class MapGenerator extends JFrame {
 	private void setupEast() {
 		JPanel eastPane = new JPanel();
 		eastPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		eastPane.setLayout(new GridLayout(4, 1));
-		
-		JPanel typePaneEast = new JPanel();
-		typePaneEast.setBorder(new EmptyBorder(0, 0, 0, 0));
-		typePaneEast.setLayout(new GridLayout(2, 1));
-		
-		typePaneEast.add(new JLabel("type"));
-		txt_type = new JTextField();
-		typePaneEast.add(txt_type);
-		
-		JPanel namePaneEast = new JPanel();
-		namePaneEast.setBorder(new EmptyBorder(0, 0, 0, 0));
-		namePaneEast.setLayout(new GridLayout(2, 1));
-		
-		namePaneEast.add(new JLabel("name"));
-		txt_name = new JTextField();
-		namePaneEast.add(txt_name);
+		eastPane.setLayout(new GridLayout(2, 1));
 		
 		JPanel descPaneEast = new JPanel();
 		descPaneEast.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -289,6 +280,7 @@ public class MapGenerator extends JFrame {
 		
 		descPaneEast.add(new JLabel("description"));
 		txa_desc = new JTextArea();
+		//TODO add Listener to change Locations description
 		descPaneEast.add(txa_desc);
 		
 		JPanel toolPaneEast = new JPanel();
@@ -338,8 +330,6 @@ public class MapGenerator extends JFrame {
 		});
 		toolPaneEast.add(btn_selectTool);
 	
-		eastPane.add(typePaneEast);
-		eastPane.add(namePaneEast);
 		eastPane.add(descPaneEast);
 		eastPane.add(toolPaneEast);
 		
@@ -453,6 +443,10 @@ public class MapGenerator extends JFrame {
 		}
 	}
 
+	private void save(Location loc) {
+		
+	}
+	
 	private void adaptButtonIconSize(JButton button, ImageIcon image) {
 		if(image == null) {
 			button.setIcon(null);

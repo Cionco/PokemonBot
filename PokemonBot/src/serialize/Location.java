@@ -52,6 +52,10 @@ public class Location {
 		return fields;
 	}
 	
+	public String getFileName() {
+		return filename;
+	}
+	
 	public void updateSize(JTable table) {
 		Dimension newSize = new Dimension(table.getModel().getColumnCount(), table.getModel().getRowCount());
 		if(newSize.width < size.width) 
