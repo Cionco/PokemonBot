@@ -17,6 +17,7 @@ import javax.swing.table.TableColumn;
 
 import serialize.Field;
 import serialize.Location;
+import serialize.LocationFieldDao;
 
 import java.awt.List;
 import java.awt.event.ActionEvent;
@@ -200,7 +201,7 @@ public class MapGenerator extends JFrame {
 		btn_save.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				save(openedLocation);
+				save();
 			}
 		});
 		northPane.add(btn_save);
@@ -472,8 +473,14 @@ public class MapGenerator extends JFrame {
 		}
 	}
 
-	private void save(Location loc) {
-		
+	private void save() {
+		try {
+			LocationFieldDao.saveAll(locations);
+		} catch (IOException e) {
+			int choice = JOptionPane.showConfirmDialog(null, "An error has occured while saving! Try again?\n\n\n" + e.getMessage());
+			
+			if(choice == JOptionPane.OK_OPTION) save();
+		}
 	}
 	
 	private void adaptButtonIconSize(JButton button, ImageIcon image) {
