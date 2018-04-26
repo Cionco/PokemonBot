@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 public class ToolDialog extends JDialog implements ActionListener {
 
 	private final JPanel contentPanel = new JPanel();
-	public Waytype data = null;
+	public Tool data = null;
 
 	/**
 	 * Launch the application.
@@ -38,7 +38,7 @@ public class ToolDialog extends JDialog implements ActionListener {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new GridLayout(3, 4));
 		
-		for(Waytype wt : Waytype.values()) {
+		for(Tool wt : Tool.values()) {
 			JButton newButton = new JButton(wt.toString());
 			newButton.addActionListener(this);
 			contentPanel.add(newButton);
@@ -50,7 +50,7 @@ public class ToolDialog extends JDialog implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		data = Waytype.valueOf(((JButton)e.getSource()).getText());
+		data = Tool.valueOf(((JButton)e.getSource()).getText());
 		this.dispose();
 	}
 	

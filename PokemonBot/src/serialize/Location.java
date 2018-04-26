@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import javax.swing.JTable;
 
-import mainstuff.Waytype;
+import mainstuff.Tool;
 
 public class Location {
 	
@@ -21,7 +21,7 @@ public class Location {
 		this.size = new Dimension(20, 20);
 		for(int i = 0; i < size.height; i++) 
 			for(int j = 0; j < size.width; j++) 
-				fields.add(new Field(j, i));
+				fields.add(new Field(j, i, this));
 	}
 	
 	public Location(String name, JTable table) {
@@ -30,7 +30,7 @@ public class Location {
 		this.size = new Dimension(table.getModel().getColumnCount(), table.getModel().getRowCount());
 		for(int i = 0; i < size.height; i++) 
 			for(int j = 0; j < size.width; j++) 
-				fields.add(new Field(j, i));
+				fields.add(new Field(j, i, this));
 	}
 	
 	public int getWidth() {
@@ -44,7 +44,7 @@ public class Location {
 		return fields.get(y * size.width + x);
 	}
 	
-	public void setField(int x, int y, Waytype type) {
+	public void setFieldType(int x, int y, Tool type) {
 		getField(x, y).setType(type);
 	}
 	
@@ -54,6 +54,10 @@ public class Location {
 	
 	public String getFileName() {
 		return filename;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public void updateSize(JTable table) {
@@ -67,7 +71,7 @@ public class Location {
 			
 			for(int i = size.height - 1; i >= 0; i--)
 				for(int j = 0; j < difference; j++) {
-					fields.add((i + 1) * size.width + j, new Field(size.width + j, i));
+					fields.add((i + 1) * size.width + j, new Field(size.width + j, i, this));
 				}
 		}
 		
@@ -80,7 +84,7 @@ public class Location {
 			int difference = newSize.height - size.height;
 			for(int i = 0; i < difference; i++)
 				for(int j = 0; j < newSize.width; j++) {
-					fields.add(size.height * newSize.width + i * newSize.width + j, new Field(j, size.height + i));
+					fields.add(size.height * newSize.width + i * newSize.width + j, new Field(j, size.height + i, this));
 				}
 		}
 		

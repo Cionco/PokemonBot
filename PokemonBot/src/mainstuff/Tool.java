@@ -3,14 +3,13 @@ import java.awt.Color;
 
 import javax.swing.ImageIcon;
 
-public enum Waytype {
-    NONE {
+public enum Tool {
+    ERASE {
     	public Color getColor() { return Color.WHITE; }
     },
-    FORREST{
+    FOREST{
     	public Color getColor() { return Color.GREEN; }
-    	public String getIconPath() { return "/Users/nicolaskepper/Desktop/tree.png"; }
-    	public ImageIcon getIcon() { return new ImageIcon(getClass().getResource("/resources/tree.png")); }
+    	public ImageIcon getIcon() { return new ImageIcon(getClass().getResource("/resources/forest.png")); }
     },
     CITY{
     	public Color getColor() { return Color.GRAY; }
@@ -35,18 +34,22 @@ public enum Waytype {
     },
     SAFARIZONE{
     	public Color getColor() { return Color.green; }
+    },
+    LINK{
+    	public ImageIcon getIcon(Tool t) { return new ImageIcon(getClass().getResource("/resources/" + t.toString().toLowerCase() + "L.png")); }
+    	public ImageIcon getIcon() { return new ImageIcon(getClass().getResource("/resources/link.png")); }
     };
     
     
     public Color getColor() {
     	throw new AbstractMethodError();
     }
-    
-    public String getIconPath() {
-    	throw new AbstractMethodError();
-    }
-    
+   
     public ImageIcon getIcon() {
     	return null;
+    }
+    
+    public ImageIcon getIcon(Tool t) {
+    	throw new AbstractMethodError();
     }
 }

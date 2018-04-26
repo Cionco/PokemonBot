@@ -29,6 +29,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
@@ -65,9 +66,9 @@ public class MapGenerator extends JFrame {
 	private ArrayList<Location> locations = new ArrayList<Location>();
 	private Location openedLocation;
 	
-	private final int CELL_SIZE = 20;
+	public static final int CELL_SIZE = 20;
 	
-	private Waytype current = null;
+	private Tool current = null;
 	
 	/**
 	 * Launch the application.
@@ -158,10 +159,13 @@ public class MapGenerator extends JFrame {
 				
 				//TODO if file exists delete file
 				
+				Location selectedLocation = locations.get(list.getSelectedIndex());
 				locations.remove(list.getSelectedIndex());
 				list.remove(list.getSelectedIndex());
-				list.select(0);
-				open(list.getSelectedIndex());
+				if(selectedLocation == openedLocation) {
+					list.select(0);
+					open(list.getSelectedIndex());
+				}
 			}
 		});
 		btn_del.setForeground(Color.RED);
@@ -329,7 +333,7 @@ public class MapGenerator extends JFrame {
 			
 		});
 		toolPaneEast.add(btn_selectTool);
-	
+		
 		eastPane.add(descPaneEast);
 		eastPane.add(toolPaneEast);
 		
@@ -358,8 +362,31 @@ public class MapGenerator extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				setTableIcon((DefaultTableModel)table.getModel(), table.getSelectedColumn(), table.getSelectedRow(), current.getIcon());
-				openedLocation.setField(table.getSelectedColumn(), table.getSelectedRow(), current);
+				if(current != Tool.LINK){
+					setTableIcon((DefaultTableModel)table.getModel(), table.getSelectedColumn(), table.getSelectedRow(), current.getIcon());
+					openedLocation.setFieldType(table.getSelectedColumn(), table.getSelectedRow(), current);
+				} else {
+					LinkDialog dlg = new LinkDialog(MapGenerator.this, field());
+					
+					dlg.addWindowListener(new WindowAdapter() {
+						public void windowDeactivated(WindowEvent e) {
+							int[] data = dlg.data;
+					
+							if(data != null) {
+								int linkLocIndex = data[0];
+								int linkFieldX = data[1];
+								int linkFieldY = data[2];
+							
+								field().addLink(locations.get(linkLocIndex).getName(), linkFieldX, linkFieldY);
+								setTableIcon((DefaultTableModel)table.getModel(), table.getSelectedColumn(), table.getSelectedRow(), Tool.LINK.getIcon(field().getType()));
+								MapGenerator.this.revalidate();
+							} else {
+								field().removeLink();
+								setTableIcon((DefaultTableModel)table.getModel(), table.getSelectedColumn(), table.getSelectedRow(), field().getType().getIcon());
+							}
+						}
+					});
+				}
 			}
 
 			@Override
@@ -369,17 +396,19 @@ public class MapGenerator extends JFrame {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if(current == null) {
-					JOptionPane.showConfirmDialog(null, "Select Tool First!", "No tool selected", JOptionPane.DEFAULT_OPTION);
-					return;
-				}
-				ImageIcon image = current.getIcon();
-				for(int row : table.getSelectedRows())
-					for(int column : table.getSelectedColumns()) {
-						setTableIcon((DefaultTableModel)table.getModel(), column, row, image);
-						openedLocation.setField(column, row, current);
+				if(current != Tool.LINK) {
+					if(current == null) {
+
+						JOptionPane.showConfirmDialog(null, "Select Tool First!", "No tool selected", JOptionPane.DEFAULT_OPTION);
+						return;
 					}
-				
+					ImageIcon image = current.getIcon();
+					for(int row : table.getSelectedRows())
+						for(int column : table.getSelectedColumns()) {
+							setTableIcon((DefaultTableModel)table.getModel(), column, row, image);
+							openedLocation.setFieldType(column, row, current);
+						}
+				}
 			}
 
 			@Override
@@ -475,7 +504,7 @@ public class MapGenerator extends JFrame {
 		}
 	}
 
-	private void setTableIcon(DefaultTableModel model, int x, int y, ImageIcon image) {	
+	public void setTableIcon(DefaultTableModel model, int x, int y, ImageIcon image) {	
 		if(image == null) {
 			model.setValueAt(null, y, x);
 			return;
@@ -491,8 +520,16 @@ public class MapGenerator extends JFrame {
 		model.setValueAt(new ImageIcon(scaled), y, x);
 	}
 
-	private Location loc() {
+	public Location loc() {
 		//return locations.get(list.getSelectedIndex());
 		return openedLocation;
+	}
+	
+	private Field field() {
+		return openedLocation.getField(table.getSelectedColumn(), table.getSelectedRow());
+	}
+
+	public ArrayList<Location> getLocations() {
+		return locations;
 	}
 }
