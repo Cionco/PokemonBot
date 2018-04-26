@@ -23,7 +23,7 @@ public class Field {
 	}
 	
 	public Tool getType() {
-		return type;
+		return (type == null)?Tool.ERASE:type;
 	}
 	
 	public int getX() {
