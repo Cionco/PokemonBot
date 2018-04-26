@@ -63,7 +63,11 @@ public class Location {
 	public String getDescription() {
 		return description;
 	}
-	
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public void updateSize(JTable table) {
 		Dimension newSize = new Dimension(table.getModel().getColumnCount(), table.getModel().getRowCount());
 		if(newSize.width < size.width) 
@@ -94,4 +98,5 @@ public class Location {
 		
 		this.size = newSize;
 	}
+
 }

@@ -26,6 +26,10 @@ public class Field {
 		return (type == null)?Tool.ERASE:type;
 	}
 	
+	Tool getRealType() {
+		return type;
+	}
+	
 	public int getX() {
 		return x;
 	}

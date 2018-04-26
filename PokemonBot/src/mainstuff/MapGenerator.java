@@ -12,6 +12,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -24,8 +26,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -158,8 +164,6 @@ public class MapGenerator extends JFrame {
 				int opt = JOptionPane.showConfirmDialog(null, "Are you sure that you want to delete the location: " + list.getSelectedItem(), "Delete Location?", JOptionPane.OK_CANCEL_OPTION);
 				if(opt == JOptionPane.CANCEL_OPTION) return;
 				
-				//TODO if file exists delete file
-				
 				Location selectedLocation = locations.get(list.getSelectedIndex());
 				locations.remove(list.getSelectedIndex());
 				list.remove(list.getSelectedIndex());
@@ -285,7 +289,21 @@ public class MapGenerator extends JFrame {
 		
 		descPaneEast.add(new JLabel("description"));
 		txa_desc = new JTextArea();
-		//TODO add Listener to change Locations description
+		txa_desc.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				try {
+					openedLocation.setDescription(txa_desc.getText());
+				} catch (NullPointerException ex) {
+					txa_desc.setText("");
+				}
+			}
+			
+		});
 		descPaneEast.add(txa_desc);
 		
 		JPanel toolPaneEast = new JPanel();
@@ -470,6 +488,8 @@ public class MapGenerator extends JFrame {
 			for(Field f : openedLocation.getFields()) 
 				if(f.getType() != null) 
 					setTableIcon((DefaultTableModel)table.getModel(), f.getX(), f.getY(), f.getType().getIcon());
+			
+			txa_desc.setText(openedLocation.getDescription());
 		}
 	}
 

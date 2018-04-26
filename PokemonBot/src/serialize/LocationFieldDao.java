@@ -31,7 +31,7 @@ public class LocationFieldDao {
 				JSONObject field = new JSONObject();
 				field.put("x", f.getX())
 						.put("y", f.getY())
-						.put("type", f.getType());
+						.put("type", f.getRealType());
 				if(f.getLink() != null)
 					field
 						.put("linkedTo", 
