@@ -2,17 +2,25 @@ package serialize;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+
+import javax.swing.JFileChooser;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class LocationFieldDao {
 
-	static String filename = "map.json";
+	static String filename = "_map.json";
+	
+	public static void main(String[] args) {
+		load();
+	}
 	
 	public static void saveAll(ArrayList<Location> locations) throws IOException {
 		JSONObject json = new JSONObject();
@@ -55,6 +63,34 @@ public class LocationFieldDao {
 		FileWriter fw = new FileWriter(new File(timeStamp + filename));
 		
 		fw.write(json.toString());
+	}
+	
+	
+	public static void load() {
+		File folder = new File(".");
+		
+		File[] files = folder.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				String lowercase = name.toLowerCase();
+				if(lowercase.endsWith(".json"))
+					return true;
+				else
+					return false;
+			}
+		});
+		
+		String[] filenames = new String[files.length];
+		for(int i = 0; i < files.length; i++) filenames[i] = files[i].getName();
+		
+		Arrays.sort(filenames);
+		
+		String filename = filenames[filenames.length - 1];
+		
+		File file = new File(filename);
+		
+		
+		
 	}
 	
 }
