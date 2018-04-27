@@ -1,9 +1,13 @@
 package serialize;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +17,8 @@ import javax.swing.JFileChooser;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import mainstuff.FileDialog;
 
 public class LocationFieldDao {
 
@@ -85,10 +91,34 @@ public class LocationFieldDao {
 		
 		Arrays.sort(filenames);
 		
-		String filename = filenames[filenames.length - 1];
+		FileDialog fd = new FileDialog(filenames);
 		
+		fd.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				String filename = fd.data;
+				System.out.println(filename);
+				load(filename);
+				super.windowDeactivated(e);
+			}
+			
+		});
+		
+		
+	}
+	
+	private static void load(String filename) {
+		JSONObject json = null;
+		Location loc = null;
 		File file = new File(filename);
-		
+		try {
+			String content = new String(Files.readAllBytes(Paths.get(file.toURI())), "UTF-8");
+			json = new JSONObject(content);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
 		
 		
 	}

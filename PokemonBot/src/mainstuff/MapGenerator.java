@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import serialize.Field;
+import serialize.LoadListener;
 import serialize.Location;
 import serialize.LocationFieldDao;
 
@@ -56,7 +57,7 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 
-public class MapGenerator extends JFrame {
+public class MapGenerator extends JFrame implements LoadListener {
 
 	/**
 	 * 
@@ -214,7 +215,7 @@ public class MapGenerator extends JFrame {
 		btn_open.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				open(list.getSelectedIndex());
+				LocationFieldDao.load();
 			}
 		});
 		northPane.add(btn_open);
@@ -558,5 +559,12 @@ public class MapGenerator extends JFrame {
 
 	public ArrayList<Location> getLocations() {
 		return locations;
+	}
+
+	@Override
+	public void loadingDone(ArrayList<Location> locations) {
+		this.locations = locations;
+		for(int i = 0; i < locations.size(); i++) 
+			list.add(locations.get(i).getName());
 	}
 }
